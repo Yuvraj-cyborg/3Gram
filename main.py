@@ -38,4 +38,28 @@ def encode(sentence, token_to_id):
     tokens = tokenize(sentence)
     return [token_to_id[token] for token in tokens]
 
+def train(dataset, token_to_id):
+    unigram = defaultdict(int)
+    bigram = defaultdict(lambda: defaultdict(int))
+    trigram = defaultdict(lambda: defaultdict(int))
+
+    for sentence in dataset:
+        ids = encode(sentence, token_to_id)
+
+        for i in range(len(ids) - 2):
+            w1, w2, w3 = ids[i], ids[i+1], ids[i+2]
+
+            unigram[w3] += 1
+            bigram[w2][w3] += 1
+            trigram[(w1, w2)][w3] += 1
+
+    return unigram, bigram, trigram
+
+def get_trigram_probs(w1, w2, trigram):
+    counts = trigram.get((w1, w2), None)
+    if not counts:
+        return None
+
+    total = sum(counts.values())
+    return {w: c / total for w, c in counts.items()}
 
