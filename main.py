@@ -81,3 +81,18 @@ def get_bigram_probs(w2,bigram):
     total = sum(counts.values())
     return {w: c / total for w, c in counts.items()}
 
+def predict_next(w1, w2, unigram, bigram, trigram):
+    """fallback mechanism if trigram doesnt exist"""
+    # Try trigram
+    probs = get_trigram_probs(w1, w2, trigram)
+    if probs:
+        return probs
+
+    # Backoff to bigram
+    probs = get_bigram_probs(w2, bigram)
+    if probs:
+        return probs
+
+    # Backoff to unigram
+    return get_unigram_probs(unigram)
+
