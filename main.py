@@ -16,7 +16,7 @@ dataset = [
 def tokenise(sentence):
     """Split sentence into tokens and then add 2 start tokens so that even the first word can be represented as tri-gram and an end token"""
     tokens = sentence.lower().split()
-    return["<start>","<start>"+tokens+"<end>"]
+    return["<start>","<start>"]+tokens+["<end>"]
 
 def build_vocab(dataset):
     """forming a set by using split words and storing them"""
@@ -38,7 +38,7 @@ def token_id(vocab):
     return token_to_id, id_to_token
 
 def encode(sentence, token_to_id):
-    tokens = tokenize(sentence)
+    tokens = tokenise(sentence)
     return [token_to_id[token] for token in tokens]
 
 def train(dataset, token_to_id):
@@ -74,7 +74,7 @@ def get_unigram_probs(unigram):
 
 def get_bigram_probs(w2,bigram):
     """calculate bigram probabilities"""
-    count = bigram.get(w2, None)
+    counts = bigram.get(w2, None)
     if not counts:
         return None
 
@@ -95,4 +95,26 @@ def predict_next(w1, w2, unigram, bigram, trigram):
 
     # Backoff to unigram
     return get_unigram_probs(unigram)
+
+def sample_from_probs(probs):
+    words = list(probs.keys())
+    weights = list(probs.values())
+    return random.choices(words, weights=weights)[0]
+
+def main():
+    # Build vocab
+    vocab = build_vocab(dataset)
+    token_to_id, id_to_token = token_id(vocab)
+
+    # Train
+    unigram, bigram, trigram = train(dataset, token_to_id)
+
+    # Test context: "this is"
+    w1 = token_to_id["is"]
+    w2 = token_to_id["a"]
+
+    probs = predict_next(w1, w2, unigram, bigram, trigram)
+    print({id_to_token[k]: v for k, v in probs.items()})
+
+main()
 
