@@ -34,5 +34,8 @@ def token_id(vocab):
 
     return token_to_id, id_to_token
 
+def encode(sentence, token_to_id):
+    tokens = tokenize(sentence)
+    return [token_to_id[token] for token in tokens]
 
 
