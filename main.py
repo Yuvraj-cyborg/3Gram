@@ -13,7 +13,7 @@ dataset = [
 def tokenise(sentence):
     """Split sentence into tokens and then add 2 start tokens so that even the first word can be represented as tri-gram and an end token"""
     tokens = sentence.lower().split()
-    return("<start>","<start>"+tokens+"<end>")
+    return["<start>","<start>"+tokens+"<end>"]
 
 def build_vocab(dataset):
     """forming a set by using split words and storing them"""
