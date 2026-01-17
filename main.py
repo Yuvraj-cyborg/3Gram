@@ -1,3 +1,6 @@
+from collections import defaultdict
+import random
+
 dataset = [
     "this is a machine",
     "this is a machine",
@@ -56,7 +59,22 @@ def train(dataset, token_to_id):
     return unigram, bigram, trigram
 
 def get_trigram_probs(w1, w2, trigram):
+    """calculate trigram probabilities"""
     counts = trigram.get((w1, w2), None)
+    if not counts:
+        return None
+
+    total = sum(counts.values())
+    return {w: c / total for w, c in counts.items()}
+
+def get_unigram_probs(unigram):
+    """calculate unigram probabilities"""
+    total = sum(unigram.values())
+    return {w: c / total for w, c in unigram.items()}
+
+def get_bigram_probs(w2,bigram):
+    """calculate bigram probabilities"""
+    count = bigram.get(w2, None)
     if not counts:
         return None
 
